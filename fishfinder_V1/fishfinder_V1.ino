@@ -1,28 +1,42 @@
-int URTRIG = 13;         // trigger pin
-int sensorPin = A0;     // select the input pin for the potentiometer
-int sensorValue = 100;    // variable to store the value coming from the sensor
+#define echoPin 2 
+#define trigPin 12 
 
-uint8_t userInput;
+long duration; 
+int distance; 
+volatile unsigned long LastPulseTime;
+char userInput ;
 
-void setup()
-{
-  pinMode(URTRIG, OUTPUT);
-  digitalWrite(URTRIG, HIGH);               
-  Serial.begin(9600);                       
+void EchoPinISR() {
+  static unsigned long startTime;
+
+  if (digitalRead(2)) // Gone HIGH
+    startTime = micros();
+  else  // Gone LOW
+  LastPulseTime = micros() - startTime;
 }
-void loop()
-{
-  if(Serial.available() >0)
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT); 
+  attachInterrupt(0, EchoPinISR, CHANGE);  // Pin 2 interrupt on any change
+  Serial.begin(115200); 
+}
+void loop() {
+
+  if(Serial.available() > 0)
   {
     userInput = Serial.read();
 
     if(userInput == 'g')
     {
-      digitalWrite(URTRIG, LOW);
-      digitalWrite(URTRIG, HIGH);
-      sensorValue = analogRead(sensorPin);
-      sensorValue = sensorValue * 1.1;
-      Serial.println(sensorValue);
+      digitalWrite(trigPin, LOW); 
+      delayMicroseconds(5); 
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10); 
+      digitalWrite(trigPin, LOW);
+      Serial.println((LastPulseTime/58.2),1);
     }
-  }
+  //delay(100);
+  }  
 }
+
