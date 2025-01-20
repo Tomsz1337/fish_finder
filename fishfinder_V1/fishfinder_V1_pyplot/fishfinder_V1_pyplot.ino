@@ -23,20 +23,25 @@ void echoPinISR()
 void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT); 
-  digitalWrite(trigPin, LOW);
   attachInterrupt(0, echoPinISR, CHANGE); 
-  Serial.begin(115200); 
+  Serial.begin(9600); 
 }
 
 void loop() {
- 
-  delayMicroseconds(5); 
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10); 
-  digitalWrite(trigPin, LOW);
-  Serial.println((LastPulseTime*0.034/2),1);
-    
-  delay(100);
-    
+
+  if(Serial.available() > 0)
+  {
+    userInput = Serial.read();
+
+    if(userInput == 'g')
+    { 
+      delayMicroseconds(5);
+      digitalWrite(trigPin, HIGH);
+      delayMicroseconds(10); 
+      digitalWrite(trigPin, LOW);
+      Serial.println((LastPulseTime/58.2),1);
+       
+    }
+  }  
 }
 

@@ -5,7 +5,7 @@ import matplotlib.animation as animation
 import numpy as np
 
 COM_PORT = "COM4"
-BAUD_RATE = 115200
+BAUD_RATE = 9600
 
 
 def animate(i, dataList, ser):
